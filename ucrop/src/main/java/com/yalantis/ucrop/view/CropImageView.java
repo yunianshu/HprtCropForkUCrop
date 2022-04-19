@@ -73,7 +73,7 @@ public class CropImageView extends TransformImageView {
     public void cropAndSaveImage(@NonNull Bitmap.CompressFormat compressFormat, int compressQuality,
                                  @Nullable BitmapCropCallback cropCallback) {
         cancelAllAnimations();
-        setImageToWrapCropBounds(false);
+//        setImageToWrapCropBounds(false);
 
         final ImageState imageState = new ImageState(
                 mCropRect, RectUtils.trapToRect(mCurrentImageCorners),
@@ -87,7 +87,8 @@ public class CropImageView extends TransformImageView {
         cropParameters.setContentImageInputUri(getImageInputUri());
         cropParameters.setContentImageOutputUri(getImageOutputUri());
 
-        new BitmapCropTask(getContext(), getViewBitmap(), imageState, cropParameters, cropCallback)
+        Bitmap viewBitmap = getViewBitmap();
+        new BitmapCropTask(getContext(), viewBitmap, imageState, cropParameters, cropCallback)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -282,7 +283,7 @@ public class CropImageView extends TransformImageView {
     }
 
     public void setImageToWrapCropBounds() {
-        setImageToWrapCropBounds(true);
+//        setImageToWrapCropBounds(true);
     }
 
     /**

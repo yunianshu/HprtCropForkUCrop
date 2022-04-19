@@ -89,6 +89,8 @@ public class HorizontalProgressWheelView extends View {
                     onScrollEvent(event, distance);
                 }
                 break;
+            default:
+                break;
         }
         return true;
     }

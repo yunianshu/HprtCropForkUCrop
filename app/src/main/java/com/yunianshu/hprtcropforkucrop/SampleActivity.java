@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
@@ -489,6 +490,7 @@ public class SampleActivity extends BaseActivity implements UCropFragmentCallbac
         UCrop uCrop = UCrop.of(uri, destinationUri);
 
         uCrop = basisConfig(uCrop);
+
         uCrop = advancedConfig(uCrop);
 
         if (requestMode == REQUEST_SELECT_PICTURE_FOR_FRAGMENT) {       //if build variant = fragment
@@ -566,6 +568,8 @@ public class SampleActivity extends BaseActivity implements UCropFragmentCallbac
 
         options.setHideBottomControls(mCheckBoxHideBottomControls.isChecked());
         options.setFreeStyleCropEnabled(mCheckBoxFreeStyleCrop.isChecked());
+//        options.setDimmedLayerColor(Color.WHITE);
+        options.setRootViewBackgroundColor(Color.WHITE);
 
         /*
         If you want to configure how gestures work for all UCropActivity tabs

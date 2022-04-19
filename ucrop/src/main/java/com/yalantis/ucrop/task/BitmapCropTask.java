@@ -2,7 +2,10 @@ package com.yalantis.ucrop.task;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -13,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.exifinterface.media.ExifInterface;
 
+import com.blankj.utilcode.util.ImageUtils;
 import com.yalantis.ucrop.callback.BitmapCropCallback;
 import com.yalantis.ucrop.model.CropParameters;
 import com.yalantis.ucrop.model.ExifInfo;
@@ -59,6 +63,7 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
 
     private int mCroppedImageWidth, mCroppedImageHeight;
     private int cropOffsetX, cropOffsetY;
+    private int frameBackgroundColor = Color.WHITE;
 
     public BitmapCropTask(@NonNull Context context, @Nullable Bitmap viewBitmap, @NonNull ImageState imageState, @NonNull CropParameters cropParameters,
                           @Nullable BitmapCropCallback cropCallback) {
@@ -147,9 +152,9 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
 
             Bitmap rotatedBitmap = Bitmap.createBitmap(mViewBitmap, 0, 0, mViewBitmap.getWidth(), mViewBitmap.getHeight(),
                     tempMatrix, true);
-            if (mViewBitmap != rotatedBitmap) {
-                mViewBitmap.recycle();
-            }
+//            if (mViewBitmap != rotatedBitmap) {
+//                mViewBitmap.recycle();
+//            }
             mViewBitmap = rotatedBitmap;
         }
 
@@ -162,10 +167,21 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
         Log.i(TAG, "Should crop: " + shouldCrop);
 
         if (shouldCrop) {
-            saveImage(Bitmap.createBitmap(mViewBitmap, cropOffsetX, cropOffsetY, mCroppedImageWidth, mCroppedImageHeight));
-            if (mCompressFormat.equals(Bitmap.CompressFormat.JPEG)) {
-                copyExifForOutputFile(context);
-            }
+            Bitmap cropBitmap = Bitmap.createBitmap(mCroppedImageWidth, mCroppedImageHeight, Bitmap.Config.ARGB_8888);
+
+            Canvas canvas = new Canvas(cropBitmap);
+            Paint paint = new Paint();
+            paint.setAntiAlias(true);
+            canvas.drawBitmap(mViewBitmap, -cropOffsetX, -cropOffsetY, paint);
+            Bitmap temp = cropBitmap.copy(Bitmap.Config.ARGB_8888, true);
+            canvas.drawColor(frameBackgroundColor);
+            canvas.drawBitmap(temp, 0, 0, null);
+
+//            Bitmap bitmap = Bitmap.createBitmap(mViewBitmap, cropOffsetX, cropOffsetY, mCroppedImageWidth, mCroppedImageHeight);
+            saveImage(cropBitmap);
+//            if (mCompressFormat.equals(Bitmap.CompressFormat.JPEG)) {
+//                copyExifForOutputFile(context);
+//            }
             return true;
         } else {
             FileUtils.copyFile(context ,mImageInputUri, mImageOutputUri);
